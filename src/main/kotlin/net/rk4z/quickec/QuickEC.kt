@@ -4,17 +4,25 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.UUID
 
 typealias TaskRunner = (JavaPlugin, Runnable) -> Unit
 
 @Suppress("unused")
-class QuickEC : JavaPlugin() {
+class QuickEC : JavaPlugin(), Listener {
     val runTask: TaskRunner = { plugin, runnable -> plugin.server.scheduler.runTask(plugin, runnable) }
+
+    override fun onEnable() {
+        server.pluginManager.registerEvents(this, this)
+    }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
         if (sender !is Player) {
@@ -22,18 +30,21 @@ class QuickEC : JavaPlugin() {
             return true
         }
 
-        if (args.isNullOrEmpty()) {
-            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_COMMAND_PROVIDED))
-            sendHelp(sender)
-            return true
-        }
-
         when (command.name.lowercase()) {
             "ec" -> {
+                if (args?.getOrNull(0) == "help") {
+                    sendHelp(sender)
+                    return true
+                }
                 runTask(this) {
-                    // Normally, everyone has this permission.
-                    // But some server owners might want to restrict it.
-                    // So, we'll check for it.
+                    if (!sender.hasPermission("quickec.open.ignore_inventory")) {
+                        val hasEnderChest = sender.inventory.contains(Material.ENDER_CHEST)
+                        if (!hasEnderChest) {
+                            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_ENDER_CHEST_IN_INVENTORY))
+                            return@runTask
+                        }
+                    }
+
                     if (sender.hasPermission("quickec.open.self")) {
                         sender.openInventory(sender.enderChest)
                     } else {
@@ -45,7 +56,7 @@ class QuickEC : JavaPlugin() {
             "uec" -> {
                 if (sender.hasPermission("quickec.open.others")) {
                     runTask(this) {
-                        if (args.isEmpty()) {
+                        if (args?.get(0)!!.isBlank() || args[0].isEmpty()) {
                             sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_PLAYER_PROVIDED))
                             return@runTask
                         }
@@ -74,6 +85,39 @@ class QuickEC : JavaPlugin() {
             }
         }
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<out String>?
+    ): MutableList<String> {
+        if (command.name.lowercase() == "uec") {
+            if (args?.size == 1) {
+                val players = Bukkit.getOnlinePlayers().map { it.name }
+                return players.toMutableList()
+            }
+        } else if (command.name.lowercase() == "ec") {
+            return mutableListOf("help")
+        } else {
+            return mutableListOf()
+        }
+
+        return mutableListOf()
+    }
+
+    @EventHandler
+    fun onPlayerInteract(event: PlayerInteractEvent) {
+        val player = event.player
+
+        // If you're sneaking, you can put the ender chest.
+        if (player.inventory.itemInMainHand.type == Material.ENDER_CHEST && !player.isSneaking && event.action.isRightClick) {
+            if (player.hasPermission("quickec.open.click")) {
+                event.isCancelled = true
+                player.openInventory(player.enderChest)
+            }
+        }
     }
 
     private fun sendHelp(player: Player) {

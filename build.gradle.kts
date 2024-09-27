@@ -2,6 +2,8 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     kotlin("jvm") version "2.0.0"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
@@ -14,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 
     library("com.google.code.gson", "gson", "2.10.1")
@@ -32,6 +35,7 @@ bukkit {
     authors = listOf("Lars")
     contributors = listOf("Lars", "cotrin_d8")
 
+    depend = listOf("Kotlin")
     softDepend = listOf("LuckPerms")
 
     commands {
@@ -53,6 +57,16 @@ bukkit {
         register("quickec.open.others") {
             description = "Allows the player to open other players' ender chests"
             default = BukkitPluginDescription.Permission.Default.OP
+        }
+
+        register("quickec.open.ignore_inventory") {
+            description = "Allows the player to open their ender chest even if they don't have one in their inventory"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+
+        register("quickec.open.click") {
+            description = "Allows the player to open their ender chest by clicking"
+            default = BukkitPluginDescription.Permission.Default.TRUE
         }
     }
 }
