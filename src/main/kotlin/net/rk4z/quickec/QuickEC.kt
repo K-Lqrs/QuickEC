@@ -12,6 +12,7 @@ import java.util.UUID
 
 typealias TaskRunner = (JavaPlugin, Runnable) -> Unit
 
+@Suppress("unused")
 class QuickEC : JavaPlugin() {
     val runTask: TaskRunner = { plugin, runnable -> plugin.server.scheduler.runTask(plugin, runnable) }
 
@@ -30,7 +31,14 @@ class QuickEC : JavaPlugin() {
         when (command.name.lowercase()) {
             "ec" -> {
                 runTask(this) {
-                    sender.openInventory(sender.enderChest)
+                    // Normally, everyone has this permission.
+                    // But some server owners might want to restrict it.
+                    // So, we'll check for it.
+                    if (sender.hasPermission("quickec.open.self")) {
+                        sender.openInventory(sender.enderChest)
+                    } else {
+                        sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_PERMISSION))
+                    }
                 }
             }
 
