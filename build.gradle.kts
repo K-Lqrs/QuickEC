@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "net.rk4z"
-version = "2.0.0"
+version = "2.1.0"
 
 repositories {
     mavenCentral()
@@ -20,9 +20,6 @@ dependencies {
     paperweight.paperDevBundle("1.21.3-R0.1-SNAPSHOT")
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
     implementation("net.rk4z.s1:pluginbase:1.1.4")
-
-    library("com.google.code.gson", "gson", "2.10.1")
-    bukkitLibrary("com.google.code.gson", "gson", "2.10.1")
 }
 
 kotlin {
@@ -71,4 +68,13 @@ bukkit {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }
     }
+}
+
+tasks.named<Jar>("jar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.exists() && !it.name.startsWith("kotlin") }
+            .map { if (it.isDirectory) it else zipTree(it) }
+    })
 }
