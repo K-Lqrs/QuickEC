@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "Cette commande est réservée aux joueurs"
+    no_player_provided: "Aucun joueur n'a été spécifié"
+    player_not_found: "Joueur introuvable"
+    no_ender_chest_in_inventory: "Aucun coffre de l'Ender dans l'inventaire. Vous devez avoir un coffre de l'Ender dans votre inventaire."
+
+  help:
+    help_header: "Aide QuickEnderChest"
+    ec_command: "Ouvre votre coffre de l'Ender"
+    uec_command: "Ouvre le coffre de l'Ender d'un autre joueur. /uec <MCID> ou /uec <UUID> nécessite la permission %s."
+
+  message:
+    no_permission: "Vous n'avez pas la permission d'exécuter cette commande (la permission %s est requise)"
+    invalid_uuid: "UUID invalide"

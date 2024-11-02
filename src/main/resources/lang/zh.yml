@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "此命令仅限玩家使用"
+    no_player_provided: "未指定玩家"
+    player_not_found: "未找到玩家"
+    no_ender_chest_in_inventory: "你的背包中没有末影箱。需要在背包中持有一个末影箱。"
+
+  help:
+    help_header: "QuickEnderChest 帮助"
+    ec_command: "打开你的末影箱"
+    uec_command: "打开其他玩家的末影箱。/uec <MCID> 或 /uec <UUID> 需要权限 %s。"
+
+  message:
+    no_permission: "你没有执行此命令的权限（需要权限 %s）"
+    invalid_uuid: "无效的UUID"

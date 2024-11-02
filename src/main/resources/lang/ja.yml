@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "プレイヤーのみがこのコマンドを実行できます"
+    no_player_provided: "プレイヤーが指定されていません"
+    player_not_found: "プレイヤーが見つかりません"
+    no_ender_chest_in_inventory: "エンダーチェストがインベントリにありません。インベントリにエンダーチェストを持っている必要があります"
+
+  help:
+    help_header: "QuickEnderChest ヘルプ"
+    ec_command: "自分のエンダーチェストを開く"
+    uec_command: "他のプレイヤーのエンダーチェストを開く。/uec <MCID> または /uec <UUID> %s の権限が必要です。"
+
+  message:
+    no_permission: "このコマンドを実行する権限がありません（%s の権限が必要です）"
+    invalid_uuid: "無効なUUIDです"

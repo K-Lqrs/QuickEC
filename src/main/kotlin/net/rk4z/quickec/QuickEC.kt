@@ -3,6 +3,8 @@ package net.rk4z.quickec
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
+import net.rk4z.s1.pluginBase.LanguageManager
+import net.rk4z.s1.pluginBase.PluginEntry
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -11,54 +13,65 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.plugin.java.JavaPlugin
+import net.rk4z.s1.pluginBase.Executor
 import java.util.UUID
 
-typealias TaskRunner = (JavaPlugin, Runnable) -> Unit
-
 @Suppress("unused")
-class QuickEC : JavaPlugin(), Listener {
-    val runTask: TaskRunner = { plugin, runnable -> plugin.server.scheduler.runTask(plugin, runnable) }
-
-    override fun onEnable() {
+class QuickEC : PluginEntry(
+    "quickec",
+    "net.rk4z.quickec",
+    false,
+    false,
+    null,
+    true,
+    "BKtFPESp",
+    listOf("ja", "en", "zh", "fr", "de", "it", "es", "ko", "zh"),
+    true
+), Listener {
+    override fun onEnablePost() {
         server.pluginManager.registerEvents(this, this)
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
-            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.THIS_COMMAND_IS_ONLY_FOR_PLAYERS))
+            sender.sendMessage(LanguageManager.getSysMessage(Main.Command.THIS_COMMAND_IS_ONLY_FOR_PLAYERS))
             return true
         }
 
         when (command.name.lowercase()) {
             "ec" -> {
-                if (args?.getOrNull(0) == "help") {
+                if (args.getOrNull(0) == "help") {
                     sendHelp(sender)
                     return true
                 }
-                runTask(this) {
+                Executor.execute {
                     if (!sender.hasPermission("quickec.open.ignore_inventory")) {
                         val hasEnderChest = sender.inventory.contains(Material.ENDER_CHEST)
                         if (!hasEnderChest) {
-                            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_ENDER_CHEST_IN_INVENTORY))
-                            return@runTask
+                            sender.sendMessage(LanguageManager.getSysMessage(Main.Command.NO_ENDER_CHEST_IN_INVENTORY))
+                            return@execute
                         }
                     }
 
                     if (sender.hasPermission("quickec.open.self")) {
                         sender.openInventory(sender.enderChest)
                     } else {
-                        sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_PERMISSION))
+                        sender.sendMessage(LanguageManager.getSysMessage(Main.Message.NO_PERMISSION))
                     }
                 }
             }
 
             "uec" -> {
+                if (args.getOrNull(0) == "help") {
+                    sendHelp(sender)
+                    return true
+                }
+
                 if (sender.hasPermission("quickec.open.others")) {
-                    runTask(this) {
-                        if (args?.get(0)!!.isBlank() || args[0].isEmpty()) {
-                            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_PLAYER_PROVIDED))
-                            return@runTask
+                    Executor.execute {
+                        if (args[0].isBlank() || args[0].isEmpty()) {
+                            sender.sendMessage(LanguageManager.getSysMessage(Main.Command.NO_PLAYER_PROVIDED))
+                            return@execute
                         }
 
                         val target: Player? = try {
@@ -68,19 +81,19 @@ class QuickEC : JavaPlugin(), Listener {
                                 Bukkit.getPlayer(args[0])
                             }
                         } catch (e: IllegalArgumentException) {
-                            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.INVALID_UUID))
-                            return@runTask
+                            sender.sendMessage(LanguageManager.getSysMessage(Main.Message.INVALID_UUID))
+                            return@execute
                         }
 
                         if (target == null) {
-                            sender.sendMessage(LanguageManager.getSysMessage(MessageKey.PLAYER_NOT_FOUND))
-                            return@runTask
+                            sender.sendMessage(LanguageManager.getSysMessage(Main.Command.PLAYER_NOT_FOUND))
+                            return@execute
                         }
 
                         sender.openInventory(target.enderChest)
                     }
                 } else {
-                    sender.sendMessage(LanguageManager.getSysMessage(MessageKey.NO_PERMISSION))
+                    sender.sendMessage(LanguageManager.getSysMessage(Main.Message.NO_PERMISSION))
                 }
             }
         }
@@ -91,10 +104,10 @@ class QuickEC : JavaPlugin(), Listener {
         sender: CommandSender,
         command: Command,
         alias: String,
-        args: Array<out String>?
+        args: Array<out String>
     ): MutableList<String> {
         if (command.name.lowercase() == "uec") {
-            if (args?.size == 1) {
+            if (args.size == 1) {
                 val players = Bukkit.getOnlinePlayers().map { it.name }
                 return players.toMutableList()
             }
@@ -121,7 +134,7 @@ class QuickEC : JavaPlugin(), Listener {
     }
 
     private fun sendHelp(player: Player) {
-        val headerComponent = LanguageManager.getMessage(player, MessageKey.HELP_HEADER)
+        val headerComponent = LanguageManager.getMessage(player, Main.Help.HELP_HEADER)
             .color(NamedTextColor.GOLD)
             .decorate(TextDecoration.BOLD)
 
@@ -129,8 +142,8 @@ class QuickEC : JavaPlugin(), Listener {
         val hEndComponent = Component.text("=======").color(NamedTextColor.GOLD)
 
         val commands = listOf(
-            "ec" to MessageKey.EC_COMMAND,
-            "uec" to MessageKey.UEC_COMMAND
+            "ec" to Main.Help.EC_COMMAND,
+            "uec" to Main.Help.UEC_COMMAND
         )
 
         player.sendMessage(hStartComponent.append(headerComponent).append(hEndComponent))

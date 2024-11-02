@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "Dieser Befehl ist nur für Spieler"
+    no_player_provided: "Kein Spieler angegeben"
+    player_not_found: "Spieler nicht gefunden"
+    no_ender_chest_in_inventory: "Kein Endertruhen im Inventar. Du benötigst eine Endertruhe im Inventar."
+
+  help:
+    help_header: "QuickEnderChest Hilfe"
+    ec_command: "Öffne deine Endertruhe"
+    uec_command: "Öffne die Endertruhe eines anderen Spielers. /uec <MCID> oder /uec <UUID> erfordert die Berechtigung %s."
+
+  message:
+    no_permission: "Du hast keine Berechtigung für diesen Befehl (Berechtigung %s erforderlich)"
+    invalid_uuid: "Ungültige UUID"

@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "Questo comando è solo per i giocatori"
+    no_player_provided: "Nessun giocatore specificato"
+    player_not_found: "Giocatore non trovato"
+    no_ender_chest_in_inventory: "Non hai una Ender Chest nel tuo inventario. Devi avere una Ender Chest nel tuo inventario."
+
+  help:
+    help_header: "Aiuto QuickEnderChest"
+    ec_command: "Apri la tua Ender Chest"
+    uec_command: "Apri la Ender Chest di un altro giocatore. /uec <MCID> o /uec <UUID> richiede il permesso %s."
+
+  message:
+    no_permission: "Non hai il permesso per eseguire questo comando (è richiesto il permesso %s)"
+    invalid_uuid: "UUID non valido"

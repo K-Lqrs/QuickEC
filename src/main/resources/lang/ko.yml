@@ -1,0 +1,17 @@
+langVersion: 1.0
+
+main:
+  command:
+    this_command_is_only_for_players: "이 명령어는 플레이어만 사용할 수 있습니다"
+    no_player_provided: "플레이어가 지정되지 않았습니다"
+    player_not_found: "플레이어를 찾을 수 없습니다"
+    no_ender_chest_in_inventory: "인벤토리에 엔더 상자가 없습니다. 엔더 상자가 인벤토리에 있어야 합니다."
+
+  help:
+    help_header: "QuickEnderChest 도움말"
+    ec_command: "자신의 엔더 상자를 엽니다"
+    uec_command: "다른 플레이어의 엔더 상자를 엽니다. /uec <MCID> 또는 /uec <UUID> 권한 %s이(가) 필요합니다."
+
+  message:
+    no_permission: "이 명령을 실행할 권한이 없습니다 (권한 %s이 필요합니다)"
+    invalid_uuid: "유효하지 않은 UUID입니다"
